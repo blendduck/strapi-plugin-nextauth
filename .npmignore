@@ -1,0 +1,37 @@
+# 构建产物
+dist/
+!dist/**
+
+# 源代码（只发编译好的 dist）
+src/
+admin/src/
+
+# 本地依赖
+node_modules/
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# 开发配置
+*.log
+.vscode/
+.idea/
+.DS_Store
+coverage/
+tsconfig.json
+tsconfig.*.json
+.eslintrc.js
+.prettierrc
+.prettierignore
+.npmignore
+
+# 测试
+__tests__/
+test/
+*.spec.ts
+*.test.ts
+
+# Git / CI
+.github/
+.gitignore
+.gitlab-ci.yml
