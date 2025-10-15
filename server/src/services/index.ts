@@ -1,5 +1,11 @@
 import service from './service';
+import token from './token';
+import settings from './settings';
 
-export default {
+const services: Record<string, unknown> = {
   service,
+  token,
+  settings,
 };
+
+export default services;

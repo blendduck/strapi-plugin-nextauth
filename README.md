@@ -29,8 +29,10 @@ export default ({ env }) => ({
 
 ## API Endpoints
 
-- `POST /api/strapi-plugin-nextauth/login` - Login
+- `POST /api/strapi-plugin-nextauth/login` - Login with email + password
 - `POST /api/strapi-plugin-nextauth/sync` - Sync with Social Account
+- `POST /api/strapi-plugin-nextauth/sendmai` - send token & OTP code
+- `POST /api/strapi-plugin-nextauth/token` - Sync with token or (email + OTP code)
 
 ## Requirements
 

@@ -24,4 +24,22 @@ export default [
       policies: [],
     },
   },
+  {
+    method: 'POST',
+    path: '/oauth/token',
+    handler: 'token.exchange',
+    config: {
+      auth: false,
+      policies: [],
+    },
+  },
+  {
+    method: 'POST',
+    path: '/send-mail',
+    handler: 'token.sendMail',
+    config: {
+      auth: false,
+      policies: [],
+    },
+  },
 ];

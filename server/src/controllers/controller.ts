@@ -3,7 +3,7 @@ import type { Core } from '@strapi/strapi';
 const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
   index(ctx) {
     ctx.body = strapi
-      .plugin('strapi-plugin-betterauth')
+      .plugin('strapi-plugin-nextauth')
       .service('service')
       .getWelcomeMessage();
   },
