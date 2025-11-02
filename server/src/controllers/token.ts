@@ -13,7 +13,8 @@ const sanitizeUser = async (user, ctx: Context) => {
   return strapi.contentAPI.sanitize.output(user, userSchema, { auth });
 };
 
-const getUsersPermissionsService = (name: string) => {
+
+const getService = (name) => {
   return strapi.plugin('users-permissions').service(name);
 };
 
@@ -60,27 +61,66 @@ export default {
       tokenRecord = await tokenService.consumeEmailCode(email, code);
     }
 
+    console.log("[exchange] tokenValue", tokenValue);
+
     if (!tokenRecord) {
       ctx.throw(401, 'Invalid or expired login credentials.');
     }
 
-    const user = await strapi.db.query(USERS_PERMISSIONS_USER_UID).findOne({
-      where: { email: tokenRecord.email },
+    const emailValue = tokenRecord.email;
+    const name =  tokenRecord.email.split('@')[0];
+
+    console.log("[exchange] email & name", emailValue, name);
+
+    const existUser = await strapi.db.query('plugin::users-permissions.user').findOne({
+      where: {
+        email: emailValue,
+      },
     });
 
-    if (!user) {
-      throw new ValidationError('User not found.');
+    // 注册新用户
+    if (!existUser) {
+      const pluginStore = await strapi.store({ type: 'plugin', name: 'users-permissions' });
+      const settings: Record<string, any> = await pluginStore.get({ key: 'advanced' });
+      const role = await strapi.db
+        .query('plugin::users-permissions.role')
+        .findOne({ where: { type: settings.default_role } });
+
+      if (!role) {
+        throw new ApplicationError('Impossible to find the default role');
+      }
+
+      const newUser = {
+        role: role.id,
+        email: emailValue.toLowerCase(),
+        username: emailValue.toLowerCase(),
+        name,
+        avatar: null,
+        provider: 'magiclink',
+        confirmed: true,
+      };
+
+      const user = await getService('user').add(newUser);
+      const sanitizedUser = await sanitizeUser(user, ctx);
+      const jwt = getService('jwt').issue(_.pick(user, ['id']));
+
+      return ctx.send({
+        jwt,
+        user: sanitizedUser,
+      });
+    } else {
+      // 更新用户
+      const user = await getService('user').edit(existUser.id, {
+        confirmed: true,
+      })
+      const sanitizedUser = await sanitizeUser(user, ctx);
+      const jwt = getService('jwt').issue(_.pick(user, ['id']));
+      return ctx.send({
+        jwt,
+        user: sanitizedUser,
+      });
     }
 
-    await ensureUserIsActive(user);
-
-    const sanitizedUser = await sanitizeUser(user, ctx);
-    const jwt = getUsersPermissionsService('jwt').issue({ id: user.id });
-
-    ctx.body = {
-      jwt,
-      user: sanitizedUser,
-    };
   },
 
   async sendMail(ctx: Context) {
