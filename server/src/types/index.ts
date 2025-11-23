@@ -15,6 +15,10 @@ export interface MagicLinkExchangeRequest {
   loginToken?: string;
   email?: string;
   code?: string;
+  userAgent?: string,
+  clientIp?: string,
+  clientId?: string,
+  fbclid?: string,
 }
 
 export interface SendMagicLinkRequest {

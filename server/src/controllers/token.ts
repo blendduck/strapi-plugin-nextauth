@@ -39,6 +39,10 @@ export default {
       loginToken,
       email,
       code,
+      userAgent,
+      clientIp,
+      clientId,
+      fbclid,
     } = ctx.request.body as MagicLinkExchangeRequest;
 
     const tokenService = strapi.plugin('strapi-plugin-nextauth').service('token');
@@ -98,6 +102,10 @@ export default {
         avatar: null,
         provider: 'magiclink',
         confirmed: true,
+        userAgent,
+        clientIp,
+        clientId,
+        fbclid,
       };
 
       const user = await getService('user').add(newUser);
@@ -106,7 +114,10 @@ export default {
 
       return ctx.send({
         jwt,
-        user: sanitizedUser,
+        user: {
+          ...sanitizeUser,
+          isNew: true
+        },
       });
     } else {
       // 更新用户
@@ -117,7 +128,10 @@ export default {
       const jwt = getService('jwt').issue(_.pick(user, ['id']));
       return ctx.send({
         jwt,
-        user: sanitizedUser,
+        user: {
+          ...sanitizeUser,
+          isNew: false
+        },
       });
     }
 

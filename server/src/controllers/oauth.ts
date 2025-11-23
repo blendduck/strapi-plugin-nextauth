@@ -78,6 +78,10 @@ export default {
       name,
       avatar,
       provider,
+      userAgent,
+      clientIp,
+      clientId,
+      fbclid,
     } = ctx.request.body;
 
     if (!email || !name) {
@@ -110,15 +114,23 @@ export default {
         avatar,
         provider,
         confirmed: true,
+        userAgent,
+        clientIp,
+        clientId,
+        fbclid,
       };
 
       const user = await getService('user').add(newUser);
       const sanitizedUser = await sanitizeUser(user, ctx);
+
       const jwt = getService('jwt').issue(_.pick(user, ['id']));
 
       return ctx.send({
         jwt,
-        user: sanitizedUser,
+        user: {
+          ...sanitizeUser,
+          isNew: true
+        },
       });
     } else {
       // 更新用户
@@ -128,10 +140,14 @@ export default {
         confirmed: true,
       })
       const sanitizedUser = await sanitizeUser(user, ctx);
+
       const jwt = getService('jwt').issue(_.pick(user, ['id']));
       return ctx.send({
         jwt,
-        user: sanitizedUser,
+        user: {
+          ...sanitizeUser,
+          isNew: false
+        },
       });
     }
   }
