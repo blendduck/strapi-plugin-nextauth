@@ -80,8 +80,7 @@ export default {
       provider,
       userAgent,
       clientIp,
-      clientId,
-      fbclid,
+      attribution
     } = ctx.request.body;
 
     if (!email || !name) {
@@ -116,8 +115,7 @@ export default {
         confirmed: true,
         userAgent,
         clientIp,
-        clientId,
-        fbclid,
+        attribution
       };
 
       const user = await getService('user').add(newUser);

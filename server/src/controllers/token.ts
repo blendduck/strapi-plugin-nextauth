@@ -41,8 +41,7 @@ export default {
       code,
       userAgent,
       clientIp,
-      clientId,
-      fbclid,
+      attribution
     } = ctx.request.body as MagicLinkExchangeRequest;
 
     const tokenService = strapi.plugin('strapi-plugin-nextauth').service('token');
@@ -104,8 +103,7 @@ export default {
         confirmed: true,
         userAgent,
         clientIp,
-        clientId,
-        fbclid,
+        attribution
       };
 
       const user = await getService('user').add(newUser);

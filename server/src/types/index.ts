@@ -17,8 +17,7 @@ export interface MagicLinkExchangeRequest {
   code?: string;
   userAgent?: string,
   clientIp?: string,
-  clientId?: string,
-  fbclid?: string,
+  attribution: any,
 }
 
 export interface SendMagicLinkRequest {
